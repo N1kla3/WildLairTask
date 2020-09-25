@@ -1,0 +1,12 @@
+
+.idea/
+
+.vs/
+
+Binaries/
+
+Intermediate/
+
+Saved/
+
+*.sln
