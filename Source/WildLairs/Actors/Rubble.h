@@ -29,6 +29,8 @@ private:
 	UMyDataAsset* LairAsset;
 	UPROPERTY(EditAnywhere)
 	UDA_Rubble* RubbleAsset;
+
+	bool bNoRecovery = true;
 	
 	void StartTimerToRebuild();
 	

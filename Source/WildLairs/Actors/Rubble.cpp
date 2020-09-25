@@ -22,6 +22,7 @@ ARubble::ARubble()
 void ARubble::BeginPlay()
 {
 	Super::BeginPlay();
+	//FOR DEBUG
 	SetLifeSpan(2);
 	if(RubbleAsset)
 	{
@@ -35,13 +36,16 @@ void ARubble::BeginPlay()
 
 void ARubble::Destroyed()
 {
-	for(auto ChestInfo : RubbleAsset->Chests)
+	if(bNoRecovery)
 	{
-		FTransform SpawnTransform = GetTransform();
-		SpawnTransform.SetLocation(SpawnTransform.GetLocation() + ChestInfo.RelativeLocation);
-		auto Chest = GetWorld()->SpawnActorDeferred<AChest>(RubbleAsset->BP_Chest, SpawnTransform);
-		Chest->SetRewardValue(ChestInfo.RewardType, ChestInfo.MinReward, ChestInfo.MaxReward);
-		Chest->FinishSpawning(SpawnTransform);
+		for(auto ChestInfo : RubbleAsset->Chests)
+		{
+			FTransform SpawnTransform = GetTransform();
+			SpawnTransform.SetLocation(SpawnTransform.GetLocation() + ChestInfo.RelativeLocation);
+			auto Chest = GetWorld()->SpawnActorDeferred<AChest>(RubbleAsset->BP_Chest, SpawnTransform);
+			Chest->SetRewardValue(ChestInfo.RewardType, ChestInfo.MinReward, ChestInfo.MaxReward);
+			Chest->FinishSpawning(SpawnTransform);
+		}
 	}
 }
 
@@ -77,6 +81,7 @@ void ARubble::RebuildLair()
 		auto NewLair = GetWorld()->SpawnActorDeferred<AWildLair>(AWildLair::StaticClass(), GetTransform());
 		NewLair->SetLairDataAsset(LairAsset);
 		NewLair->FinishSpawning(GetTransform());
+		bNoRecovery = false;
 		Destroy();
 	}else
 		UE_LOG(LogTemp, Error, TEXT("No asset for lair rebuild specified: %s"), *GetName());
