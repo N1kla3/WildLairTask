@@ -8,6 +8,8 @@
 
 #include "Chest.generated.h"
 
+struct FChestProperties;
+
 UENUM()
 enum class ERewardType
 {
@@ -23,27 +25,29 @@ class WILDLAIRS_API AChest : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AChest();
-	
+	static AChest* SpawnChest(UWorld* World, const TSubclassOf<AChest> ChestType, FTransform RubbleTransform, FChestProperties ChestConfig);
 	UFUNCTION()
     void OnOverlapBegin(AActor* OverlappedActor, AActor* OtherActor );
 	void SetRewardValue(const ERewardType RewardType, const int Min, int Max);
+
+protected:
+	virtual void BeginPlay() override;
+	
 private:
 	UPROPERTY(EditAnywhere)
-	UStaticMeshComponent* ChestMesh;
+	UStaticMeshComponent* m_ChestMesh;
 	UPROPERTY(EditAnywhere)
-	ERewardType ChestType;
+	ERewardType m_ChestType;
 	UPROPERTY(EditAnywhere, Category="Reward")
-	int MinGold;
+	int m_MinGold;
 	UPROPERTY(EditAnywhere, Category="Reward")
-	int MaxGold;
+	int m_MaxGold;
 	UPROPERTY(EditAnywhere, Category="Reward")
-	int Experience;
+	int m_Experience;
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<URubbleRewardInfo> RewardInfoWidget;
+	TSubclassOf<URubbleRewardInfo> m_RewardInfoWidget;
 	UPROPERTY()
-	URubbleRewardInfo* InfoWidgetInstance;
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+	URubbleRewardInfo* m_InfoWidgetInstance;
+
 
 };

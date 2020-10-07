@@ -7,15 +7,24 @@
 #include "WildLair.h"
 #include "TimerManager.h"
 
-// Sets default values
 ARubble::ARubble()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
-	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
-	RootComponent = Root;
-	Mesh->SetupAttachment(RootComponent);
+	m_Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
+	m_Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+	RootComponent = m_Root;
+	m_Mesh->SetupAttachment(RootComponent);
+}
+
+ARubble* ARubble::SpawnRubble(UWorld* World, TSubclassOf<ARubble> RubbleType, const FTransform& LairTransform,
+                              UMyDataAsset* LairAsset)
+{
+	auto rubble = World->SpawnActorDeferred<ARubble>(RubbleType, LairTransform);
+	rubble->SetRubbleAsset(LairAsset->rubble_asset);
+	rubble->SetSpawnLairAsset(LairAsset);
+	rubble->FinishSpawning(LairTransform);
+	return rubble;
 }
 
 // Called when the game starts or when spawned
@@ -24,11 +33,11 @@ void ARubble::BeginPlay()
 	Super::BeginPlay();
 	//FOR DEBUG
 	SetLifeSpan(2);
-	if(RubbleAsset)
+	if (m_RubbleAsset)
 	{
-		Mesh->SetStaticMesh(RubbleAsset->RubbleMesh);
+		m_Mesh->SetStaticMesh(m_RubbleAsset->rubble_mesh);
 		StartTimerToRebuild();
-	}else
+	} else
 	{
 		UE_LOG(LogTemp, Error, TEXT("No Asset Specified in : %s"), *GetName());
 	}
@@ -36,15 +45,11 @@ void ARubble::BeginPlay()
 
 void ARubble::Destroyed()
 {
-	if(bNoRecovery)
+	if (bNoRecovery)
 	{
-		for(auto ChestInfo : RubbleAsset->Chests)
+		for (auto ChestInfo : m_RubbleAsset->chests)
 		{
-			FTransform SpawnTransform = GetTransform();
-			SpawnTransform.SetLocation(SpawnTransform.GetLocation() + ChestInfo.RelativeLocation);
-			auto Chest = GetWorld()->SpawnActorDeferred<AChest>(RubbleAsset->BP_Chest, SpawnTransform);
-			Chest->SetRewardValue(ChestInfo.RewardType, ChestInfo.MinReward, ChestInfo.MaxReward);
-			Chest->FinishSpawning(SpawnTransform);
+			AChest::SpawnChest(GetWorld(), m_RubbleAsset->chest_type, GetTransform(), ChestInfo);
 		}
 	}
 }
@@ -57,33 +62,33 @@ void ARubble::Tick(float DeltaTime)
 
 void ARubble::SetSpawnLairAsset(UMyDataAsset* NewLairAsset)
 {
-	LairAsset = NewLairAsset;
+	m_LairAsset = NewLairAsset;
 }
 
 void ARubble::SetRubbleAsset(UDA_Rubble* NewRubbleAsset)
 {
-	RubbleAsset = NewRubbleAsset;
+	m_RubbleAsset = NewRubbleAsset;
 }
 
 void ARubble::StartTimerToRebuild()
 {
-	if(RubbleAsset)
+	if (m_RubbleAsset)
 	{
-		FTimerHandle TimerHandle;
-		GetWorldTimerManager().SetTimer(TimerHandle,this, &ARubble::RebuildLair, RubbleAsset->RecoveryTime, true);
+		FTimerHandle timer_handle;
+		GetWorldTimerManager().SetTimer(timer_handle,this, &ARubble::RebuildLair, m_RubbleAsset->recovery_time, true);
 	}
 }
 
 void ARubble::RebuildLair()
 {
-	if(LairAsset)
+	if (m_LairAsset)
 	{	
-		auto NewLair = GetWorld()->SpawnActorDeferred<AWildLair>(AWildLair::StaticClass(), GetTransform());
-		NewLair->SetLairDataAsset(LairAsset);
-		NewLair->FinishSpawning(GetTransform());
+		auto new_lair = GetWorld()->SpawnActorDeferred<AWildLair>(AWildLair::StaticClass(), GetTransform());
+		new_lair->SetLairDataAsset(m_LairAsset);
+		new_lair->FinishSpawning(GetTransform());
 		bNoRecovery = false;
 		Destroy();
-	}else
+	} else
 		UE_LOG(LogTemp, Error, TEXT("No asset for lair rebuild specified: %s"), *GetName());
 }
 

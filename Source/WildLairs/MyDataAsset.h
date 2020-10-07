@@ -18,14 +18,14 @@ class WILDLAIRS_API UMyDataAsset : public UDataAsset
 	GENERATED_BODY()
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UStaticMesh* LairMesh;
+	UStaticMesh* lair_mesh;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int Health;
+	int health;
 
 	UPROPERTY(EditAnywhere, Category="RubbleMechanic")
-	bool IsIncludeRubble;
+	bool is_include_rubble;
 
 	UPROPERTY(EditAnywhere, Category="RubbleMechanic")
-	UDA_Rubble* RubbleAsset;
+	UDA_Rubble* rubble_asset;
 };

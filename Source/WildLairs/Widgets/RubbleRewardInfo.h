@@ -15,15 +15,19 @@ UCLASS()
 class WILDLAIRS_API URubbleRewardInfo : public UUserWidget
 {
 	GENERATED_BODY()
+    
 public:
     void SetWorldLocation(const FVector& Location);
-    void SetOutputText(const FString OutText);
+    void SetOutputText(const FString& OutText);
+
 protected:
     virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+
 private:
-    FString InfoText;
-    FVector WorldSpawnLocation;
     UPROPERTY(meta = (BindWidget))
-    UTextBlock* OutputText;
-    bool IsSetWorldLocation = false;
+    UTextBlock* m_OutputText;
+    
+    FString m_InfoText;
+    FVector m_WorldSpawnLocation;
+    bool m_IsSetWorldLocation = false;
 };

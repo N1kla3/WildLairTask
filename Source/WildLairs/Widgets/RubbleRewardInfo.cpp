@@ -8,26 +8,29 @@
 
 void URubbleRewardInfo::SetWorldLocation(const FVector& Location)
 {
-    WorldSpawnLocation = Location;
-    IsSetWorldLocation = true;
+    m_WorldSpawnLocation = Location;
+    m_IsSetWorldLocation = true;
+    FVector2D widget_screen;
+    UGameplayStatics::ProjectWorldToScreen(GetOwningPlayer(), m_WorldSpawnLocation, widget_screen, false);
+    SetPositionInViewport(widget_screen);
 }
 
-void URubbleRewardInfo::SetOutputText(const FString OutText)
+void URubbleRewardInfo::SetOutputText(const FString& OutText)
 {
-    if(OutputText)
+    if (m_OutputText)
     {
-        OutputText->SetText(FText::FromString(OutText));
+        m_OutputText->SetText(FText::FromString(OutText));
     }
 }
 
 void URubbleRewardInfo::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
     Super::NativeTick(MyGeometry, InDeltaTime);
-    if (IsSetWorldLocation)
+    if (m_IsSetWorldLocation)
     {
-        WorldSpawnLocation.Z += 50.f * InDeltaTime;
-        FVector2D WidgetScreen;
-        UGameplayStatics::ProjectWorldToScreen(GetOwningPlayer(), WorldSpawnLocation, WidgetScreen, false);
-        SetPositionInViewport(WidgetScreen);
+        m_WorldSpawnLocation.Z += 50.f * InDeltaTime;
+        FVector2D widget_screen;
+        UGameplayStatics::ProjectWorldToScreen(GetOwningPlayer(), m_WorldSpawnLocation, widget_screen, false);
+        SetPositionInViewport(widget_screen);
     }
 }

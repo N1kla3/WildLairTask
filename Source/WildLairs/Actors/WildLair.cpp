@@ -5,30 +5,26 @@
 
 #include "Rubble.h"
 
-// Sets default values
 AWildLair::AWildLair()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
-	BuildingMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("mesh"));
-	RootComponent = Root;
-	BuildingMesh->SetupAttachment(RootComponent);
+	m_Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
+	m_BuildingMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("mesh"));
+	RootComponent = m_Root;
+	m_BuildingMesh->SetupAttachment(RootComponent);
 }
 
-// Called when the game starts or when spawned
 void AWildLair::BeginPlay()
 {
 	Super::BeginPlay();
 	SetLifeSpan(5);
-	if(LairAsset)
+	if(m_LairAsset)
 	{
-		BuildingMesh->SetStaticMesh(LairAsset->LairMesh);
+		m_BuildingMesh->SetStaticMesh(m_LairAsset->lair_mesh);
 	}else
 		UE_LOG(LogTemp, Warning, TEXT("No asset specified in : %s"), *GetName());
 }
 
-// Called every frame
 void AWildLair::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -36,17 +32,14 @@ void AWildLair::Tick(float DeltaTime)
 
 void AWildLair::SetLairDataAsset(UMyDataAsset* Asset)
 {
-	LairAsset = Asset;
+	m_LairAsset = Asset;
 }
 
 void AWildLair::Destroyed()
 {
-	if(LairAsset && LairAsset->IsIncludeRubble)
+	if(m_LairAsset && m_LairAsset->is_include_rubble)
 	{
-		auto Rubble = GetWorld()->SpawnActorDeferred<ARubble>(ARubble::StaticClass(), GetTransform());
-		Rubble->SetRubbleAsset(LairAsset->RubbleAsset);
-		Rubble->SetSpawnLairAsset(LairAsset);
-		Rubble->FinishSpawning(GetTransform());
+		ARubble::SpawnRubble(GetWorld(), ARubble::StaticClass(), GetTransform(), m_LairAsset);
 	}else
 		UE_LOG(LogTemp, Error, TEXT("No lair asset specified in : %s"), *GetName());
 }

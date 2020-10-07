@@ -18,32 +18,31 @@ class WILDLAIRS_API ARubble : public AActor
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
 	ARubble();
-private:
-	UPROPERTY()
-	USceneComponent* Root;
-	UPROPERTY(EditAnywhere)
-	UStaticMeshComponent* Mesh;
-	UPROPERTY(EditAnywhere)
-	UMyDataAsset* LairAsset;
-	UPROPERTY(EditAnywhere)
-	UDA_Rubble* RubbleAsset;
-
-	bool bNoRecovery = true;
-	
-	void StartTimerToRebuild();
-	
-	UFUNCTION()
-    void RebuildLair();
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-	virtual void Destroyed() override;
-public:	
-	// Called every frame
+	static ARubble* SpawnRubble(UWorld* World, TSubclassOf<ARubble> RubbleType, const FTransform& LairTransform, UMyDataAsset* LairAsset);
 	virtual void Tick(float DeltaTime) override;
-
 	void SetSpawnLairAsset(UMyDataAsset* NewLairAsset);
 	void SetRubbleAsset(UDA_Rubble* NewRubbleAsset);
+
+protected:
+	virtual void BeginPlay() override;
+	virtual void Destroyed() override;
+
+private:
+	UFUNCTION()
+    void RebuildLair();
+
+	void StartTimerToRebuild();
+
+	UPROPERTY()
+	USceneComponent* m_Root;
+	UPROPERTY(EditAnywhere)
+	UStaticMeshComponent* m_Mesh;
+	UPROPERTY(EditAnywhere)
+	UMyDataAsset* m_LairAsset;
+	UPROPERTY(EditAnywhere)
+	UDA_Rubble* m_RubbleAsset;
+
+	bool bNoRecovery = true;
+
 };

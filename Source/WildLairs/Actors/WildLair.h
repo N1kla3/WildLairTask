@@ -14,25 +14,21 @@ class WILDLAIRS_API AWildLair : public AActor
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
 	AWildLair();
-private:
-	UPROPERTY(VisibleAnywhere)
-	USceneComponent* Root;
 	
-	UPROPERTY(VisibleAnywhere)
-	UStaticMeshComponent* BuildingMesh;
+	virtual void Tick(float DeltaTime) override;
+	void SetLairDataAsset(UMyDataAsset* Asset);
 
-	UPROPERTY(EditAnywhere)
-	UMyDataAsset* LairAsset;
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	virtual void Destroyed() override;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+private:
+	UPROPERTY(VisibleAnywhere)
+	USceneComponent* m_Root;
+	UPROPERTY(VisibleAnywhere)
+	UStaticMeshComponent* m_BuildingMesh;
+	UPROPERTY(EditAnywhere)
+	UMyDataAsset* m_LairAsset;
 
-	void SetLairDataAsset(UMyDataAsset* Asset);
 };

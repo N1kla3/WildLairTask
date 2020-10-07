@@ -16,16 +16,16 @@ struct FChestProperties
 {
     GENERATED_BODY()
     UPROPERTY(EditAnywhere)
-    ERewardType RewardType;
+    ERewardType reward_type;
 
     UPROPERTY(EditAnywhere)
-    int MinReward = 0;
+    int min_reward = 0;
 
     UPROPERTY(EditAnywhere)
-    int MaxReward = 0;
+    int max_reward = 0;
 
     UPROPERTY(EditAnywhere)
-    FVector RelativeLocation;
+    FVector relative_location;
 };
 
 UCLASS()
@@ -34,17 +34,17 @@ class WILDLAIRS_API UDA_Rubble : public UDataAsset
 	GENERATED_BODY()
 public:
     UPROPERTY(EditAnywhere)
-    UStaticMesh* RubbleMesh;
+    UStaticMesh* rubble_mesh;
 
     UPROPERTY(EditAnywhere)
-    int Health;
+    int health;
 
     UPROPERTY(EditAnywhere)
-    float RecoveryTime;
+    float recovery_time;
 
     UPROPERTY(EditAnywhere)
-    TSubclassOf<AChest> BP_Chest;
+    TSubclassOf<AChest> chest_type;
     
     UPROPERTY(EditAnywhere)
-    TArray<FChestProperties> Chests;
+    TArray<FChestProperties> chests;
 };
