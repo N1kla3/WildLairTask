@@ -20,18 +20,24 @@ class WILDLAIRS_API ARubble : public AActor
 public:	
 	ARubble();
 	static ARubble* SpawnRubble(UWorld* World, TSubclassOf<ARubble> RubbleType, const FTransform& LairTransform, UMyDataAsset* LairAsset);
+
 	virtual void Tick(float DeltaTime) override;
 	void SetSpawnLairAsset(UMyDataAsset* NewLairAsset);
 	void SetRubbleAsset(UDA_Rubble* NewRubbleAsset);
 
 protected:
 	virtual void BeginPlay() override;
-	virtual void Destroyed() override;
 
 private:
 	UFUNCTION()
     void RebuildLair();
-
+	UFUNCTION()
+	void OnDestroyAnimation(AActor* DestroyedActor);
+	UFUNCTION()
+    void OnDestroyStuff(AActor* DestroyedActor);
+	UFUNCTION()
+    void OnDestroy(AActor* DestroyedActor);
+	
 	void StartTimerToRebuild();
 
 	UPROPERTY()

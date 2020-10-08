@@ -15,6 +15,10 @@ ARubble::ARubble()
 	m_Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	RootComponent = m_Root;
 	m_Mesh->SetupAttachment(RootComponent);
+	
+	OnDestroyed.AddDynamic(this, &ARubble::OnDestroy);
+	OnDestroyed.AddDynamic(this, &ARubble::OnDestroyAnimation);
+	OnDestroyed.AddDynamic(this, &ARubble::OnDestroyStuff);
 }
 
 ARubble* ARubble::SpawnRubble(UWorld* World, TSubclassOf<ARubble> RubbleType, const FTransform& LairTransform,
@@ -40,17 +44,6 @@ void ARubble::BeginPlay()
 	} else
 	{
 		UE_LOG(LogTemp, Error, TEXT("No Asset Specified in : %s"), *GetName());
-	}
-}
-
-void ARubble::Destroyed()
-{
-	if (bNoRecovery)
-	{
-		for (auto ChestInfo : m_RubbleAsset->chests)
-		{
-			AChest::SpawnChest(GetWorld(), m_RubbleAsset->chest_type, GetTransform(), ChestInfo);
-		}
 	}
 }
 
@@ -90,5 +83,26 @@ void ARubble::RebuildLair()
 		Destroy();
 	} else
 		UE_LOG(LogTemp, Error, TEXT("No asset for lair rebuild specified: %s"), *GetName());
+}
+
+void ARubble::OnDestroyAnimation(AActor* DestroyedActor)
+{
+	//TODO: animation on destroy
+}
+
+void ARubble::OnDestroyStuff(AActor* DestroyedActor)
+{
+	//TODO: some stuff on destoy
+}
+
+void ARubble::OnDestroy(AActor* DestroyedActor)
+{
+	if (bNoRecovery)
+	{
+		for (auto ChestInfo : m_RubbleAsset->chests)
+		{
+			AChest::SpawnChest(GetWorld(), m_RubbleAsset->chest_type, GetTransform(), ChestInfo);
+		}
+	}
 }
 

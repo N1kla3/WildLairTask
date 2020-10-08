@@ -21,9 +21,11 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
-	virtual void Destroyed() override;
 
 private:
+	UFUNCTION()
+	void OnDestroySpawnRubble(AActor* DestroyedActor);
+
 	UPROPERTY(VisibleAnywhere)
 	USceneComponent* m_Root;
 	UPROPERTY(VisibleAnywhere)

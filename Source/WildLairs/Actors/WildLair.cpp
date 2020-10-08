@@ -12,6 +12,8 @@ AWildLair::AWildLair()
 	m_BuildingMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("mesh"));
 	RootComponent = m_Root;
 	m_BuildingMesh->SetupAttachment(RootComponent);
+
+	OnDestroyed.AddDynamic(this, &AWildLair::OnDestroySpawnRubble);
 }
 
 void AWildLair::BeginPlay()
@@ -35,7 +37,7 @@ void AWildLair::SetLairDataAsset(UMyDataAsset* Asset)
 	m_LairAsset = Asset;
 }
 
-void AWildLair::Destroyed()
+void AWildLair::OnDestroySpawnRubble(AActor* DestroyedActor)
 {
 	if(m_LairAsset && m_LairAsset->is_include_rubble)
 	{
